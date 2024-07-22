@@ -7,7 +7,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
     <style>
-        /* Your CSS styles here */
+        body {
+        	font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: blue;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        main {
+        	margin-top:50px;
+            padding: 2rem;
+        }
+
+        .view-section {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 1.5rem;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        footer {
+        	margin-top: 250px;
+            background-color: blue;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -15,10 +68,11 @@
         <h1>Student Dashboard</h1>
         <% 
             // Retrieve the username from session
-            String username = (String) session.getAttribute("username");
+            
+        	String name = (String) session.getAttribute("name");
         %>
-        <% if (username != null && !username.isEmpty()) { %>
-            <h1>Hello, <%= username %></h1>
+        <% if (name != null && name.isEmpty()) { %>
+            <h1>Hello <%= name %></h1>
         <% } else { %>
             <h1>No username found in session.</h1>
         <% } %>
@@ -39,6 +93,7 @@
                 <tbody>
                     <% 
                         // Database connection details
+                        String userName = (String) session.getAttribute("username");
                         String url = "jdbc:mysql://localhost:3306/tutor";
                         String dbUser = "root";
                         String dbPassword = "";
@@ -54,9 +109,9 @@
                             conn = DriverManager.getConnection(url, dbUser, dbPassword);
 
                             // Prepare a statement to fetch exams for the logged-in student
-                            String sql = "SELECT exam_id, exam_name, exam_date FROM exams WHERE username = ?";
+                            String sql = "SELECT exam_id, exam_name, exam_date FROM exams WHERE username = ?;";
                             pst = conn.prepareStatement(sql);
-                            pst.setString(1, username); // Use the username from session
+                            pst.setString(1, userName); // Use the username from session
                             rs = pst.executeQuery();
 
                             // Iterate over the result set and display the data

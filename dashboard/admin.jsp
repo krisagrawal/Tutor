@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.sql.Connection, java.sql.DriverManager, java.sql.PreparedStatement, java.sql.ResultSet, java.sql.SQLException" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -94,11 +95,20 @@ footer {
 <body>
     <header>
         <h1>Admin Dashboard</h1>
+        <% 
+            // Retrieve the username from session
+            String name = (String) session.getAttribute("name");
+        %>
+        <% if (name != null && !name.isEmpty()) { %>
+            <h1>Hello <%= name %></h1>
+        <% } else { %>
+            <h1>No username found in session.</h1>
+        <% } %>
     </header>
 
     <main>
         <!-- Add Student Form -->
-        <section class="form-section">
+         <!-- <section class="form-section">
             <h2>Add Student</h2>
             <form action="AddStudentServlet" method="post">
                 <label for="studentName">Name:</label>
@@ -109,7 +119,7 @@ footer {
                 
                 <button type="submit">Add Student</button>
             </form>
-        </section>
+        </section> --!> 
 
         <!-- View Students -->
         <section class="view-section">
@@ -117,20 +127,70 @@ footer {
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Username</th>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <%-- Placeholder for dynamic student data --%>
+                    <% 
+                   	 	String userName = (String) session.getAttribute("username");
+                        // Database connection details
+                        String url = "jdbc:mysql://localhost:3306/tutor";
+                        String dbUser = "root";
+                        String dbPassword = "";
+                        Connection conn = null;
+                        PreparedStatement pst = null;
+                        ResultSet rs = null;
+
+                        try {
+                            // Load and register the JDBC driver
+                            Class.forName("com.mysql.cj.jdbc.Driver");
+
+                            // Establish the connection
+                            conn = DriverManager.getConnection(url, dbUser, dbPassword);
+
+                            // Prepare a statement to fetch exams for the logged-in student
+                            String sql = "SELECT * FROM users";
+                            pst = conn.prepareStatement(sql);
+                            // Use the username from session
+                            rs = pst.executeQuery();
+
+                            // Iterate over the result set and display the data
+                            while (rs.next()) {
+                            	int role = rs.getInt("role");
+                            	if(role == 2) {
+	                                String StudUsername = rs.getString("username");
+	                                String StudName = rs.getString("name");
+	                                String email = rs.getString("email");
+                    %>
+	                                <tr>
+	                                    <td><%= StudUsername %></td>
+	                                    <td><%= StudName %></td>
+	                                    <td><%= email %></td>
+	                                </tr>
+                    <% 			}
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                    %>
+                                <tr>
+                                    <td colspan="3">Error fetching data</td>
+                                </tr>
+                    <% 
+                        } finally {
+                            // Close resources
+                            try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+                            try { if (pst != null) pst.close(); } catch (SQLException e) { e.printStackTrace(); }
+                            try { if (conn != null) conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+                        }
+                    %>
                 </tbody>
             </table>
         </section>
 
         <!-- Modify Student Data -->
-        <section class="form-section">
+        <!--  <section class="form-section">
             <h2>Modify Student Data</h2>
             <form action="ModifyStudentServlet" method="post">
                 <label for="studentId">Student ID:</label>
@@ -144,7 +204,7 @@ footer {
                 
                 <button type="submit">Update Student</button>
             </form>
-        </section>
+        </section> --!>
 
         <!-- Create Exam Form -->
         <section class="form-section">
