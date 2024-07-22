@@ -190,11 +190,12 @@ footer {
         </section>
 
         <!-- Modify Student Data -->
-        <!--  <section class="form-section">
+        <section class="form-section">
             <h2>Modify Student Data</h2>
             <form action="ModifyStudentServlet" method="post">
-                <label for="studentId">Student ID:</label>
-                <input type="text" id="studentId" name="studentId" required>
+            	<input type="hidden" name="username" value="<%=userName %>">
+                <label for="studentId">Student Username:</label>
+                <input type="text" id="studentId" name="studUsername" required>
                 
                 <label for="newStudentName">New Name:</label>
                 <input type="text" id="newStudentName" name="newStudentName">
@@ -204,7 +205,7 @@ footer {
                 
                 <button type="submit">Update Student</button>
             </form>
-        </section> --!>
+        </section> 
 
         <!-- Create Exam Form -->
         <section class="form-section">
